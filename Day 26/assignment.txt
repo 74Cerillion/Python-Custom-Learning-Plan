@@ -1,0 +1,81 @@
+A01 | Day 26 - Test Behavior and Isolate Dependencies
+Primary Concept: Automated Testing as an independent feedback mechanism
+Secondary Concept: Dependency Isolation
+
+Testing a price parser without a live network, requiring normal,
+boundary, and failure tests, deliberately injecting one defect
+and demonstrating that a test catches it, and then explaining
+what those tests do not prove
+
+THE ASSIGNMENT:::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+Build a tiny price-data parser and its test suite
+
+Imagine some external source eventually gives the Trader a Python dict
+representing a market observation:
+{
+    "symbol": "AAPL",
+    "price": 234.56,
+    "timestamp": "2026-09-16T09:31:00"
+}
+Your parser receives that data and either produces a valid internal
+representation or rejects it. Do not make an API request, do not use
+live market data, Do not build Trader infrastructure.
+
+REQUIRED BEHAVIOR::::::::::::::::::::::::::::::::::::::::::::::::::::::
+Implementation should include enough behavior to test these cases:
+    1. Normal Case: Valid Symbol, price, timestamp are accepted
+    2. Boundary Case: Choose one meaningful boundary yourself and
+        determine what correct behavior should behavior
+    3. Failure Case: Choose at least two malformed inputs of the
+        boundary
+Determine what constitutes valid input is part of the planning exercise
+Your parser can be extremely small. One function is sufficient. A tiny
+class or dataclass is acceptable if your design reasoning justifies it,
+but don't create architecture just for architecture sake.
+
+PHASES:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+Phase 1------------------Research/Learning---------------------
+                        Budget : 90 minutes
+Research these concepts:
+    What a unit test actually tests
+    Test case vs Test suite
+    Arrange -> Act -> Assert
+    Assertions
+    Happy-Path Testing
+    Boundary/EdgeCase Testing
+    Failure/Error-Path Testing
+    Test Isolation
+    Deterministic tests
+    Fixtures/Test data
+    Dependency Isolation
+    Why External Services make Poor Unit-Test Dependencies
+    False Confidence from tests
+    Difference between "these tests passed" and "This program is correct"
+
+Phase 2------------------Planning-----------------
+                        Budget: 60 minutes
+Planning document should contain:
+    Responsibility - What exactly does the parser own, and what does it
+        not own?
+    Input Contract - What structure/data does it expect?
+    Output Contract - What does successful parsing produce?
+    Failure Contract - What conditions cause rejection? How will rejection
+        be communicated?
+    Dependency Analysis - What does this component depend on? What have
+        you deliberately excluded?
+    Test Matrix - Identify your normal case, boundary case, and at least
+        two failure cases. For each, write the input, expected behavior,
+        and why that test exists.
+    Execution Flow / Pseudocode - Parser logic followed by test logic
+    What the tests don't prove - Identify at least 3 things that could
+        still be wrong even if every test passes.
+
+Phase 3-----------------Implementation----------------
+                      Budget: 30 minutes
+Implement only whats been planned
+
+DEFINTIION OF DONE::::::::::::::::::::::::::::::::::::::::::::::::::::::
+research notes ready to be added to spaced repetition
+parser source
+test source
+evidence/output from your final test run
