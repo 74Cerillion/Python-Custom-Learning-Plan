@@ -104,3 +104,88 @@ Edge Case Testing:
         complex interactions, or extreme stress. The opposite of the
         'Happy Path'
 """
+
+"""Failure Testing
+AKA Negative Testing or Error Path Testing
+
+A software testing methodology designed to see how a software handles
+    unexpected inputs, invalid data, or system exceptions
+
+Core objective is ensuring that the system can fail gracefully.
+"""
+
+"""Test Isolation
+Practice used to gather evidence about a defined risk, behavior, boundary,
+    or operation condition.
+Used to pick good tests that produce useful evidence instead of ceremonial
+    checks that only create activity. 
+Starts with a risk rather than a tool. If a service must remain responsive
+    during a traffic surge, start by designing the load shape, response
+    threshold, and observation window. From there, design tests that give
+    information on those things, rather than just testing anything and
+    everything and hoping the data is cohesive enough to get picture of
+    responsiveness during a traffic surge
+"""
+
+"""Deterministic Tests
+Software tests that always produce the exact same pass or fail result when
+    run with the same starting state and inputs.
+The contain no randomness, no hidden time dependencies, no external work
+    calls that change outcomes between runs. 
+"""
+
+"""Fixtures
+A fixed, known state or set of inputs used as a baseline to run software
+    tests reliably and repeatedly. AKA your Test Data.
+"""
+
+"""Dependency Isolation
+The practice of ensuring an application uses only its explicitly declared
+    third-party libraries and runtime tools, preventing hidden system packages
+    or other projects from interfering
+"""
+
+"""External Services in UnitTests
+Poor dependencies because they introduce slow performance, flakiness, and lack
+    of control into the testing process. They bring another potential layer of
+    failure, which reduces the tests effectiveness. 
+They're non-deterministic and lack isolation because of external factors outside
+    the control of code or codebase itself.
+"""
+
+#Testing can't tell you what's wrong with your code, only what's not wrong with it
+
+#HOW TO UNIT TEST IN PYTHON
+"""
+unittest is built into the PSL
+A test case is created by inheriting from unittest
+"""
+def add(a, b):
+   return a+b
+import unittest
+class AddTest(unittest.TestCase):
+    def test_addition(self):
+       self.assertEqual(add(2, 3), 5)
+
+#output will be:
+#---------------------------------------------
+# Ran test in 0.0000s
+# OK
+
+#what's actually happening up there?
+#add is the function we're testing
+# we import unittest to write the test
+# define a class that inherits from PSL's unittest
+# define a test to run:
+#   this specific test is a deterministic, happy-path test case that
+#   isolates addition. The fixtures are 2 and 3. The assertion is 5.
+
+"""Different assert methods in unittest
+.assertEquals(a, b) = check is a == b
+.assertTrue(x) = Check is bool(x) == True
+.assertIsInstance(a, b) = check if a is an instance of class b
+.assertIsNone(x) = ensures x is None
+.assertFalse(x) = reverse of .assertTrue
+.assertIs(a, b) = check is a is identical to b
+.assertIn(a, b) = check is a is a member of b
+"""
