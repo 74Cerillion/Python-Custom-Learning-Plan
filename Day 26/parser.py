@@ -1,9 +1,3 @@
-test = {
-    "symbol": "AAPL",
-    "price": 234.56,
-    "timestamp": "2026-09-16T09:31:00"
-}
-
 from datetime import datetime
 
 def _validate(ni):
@@ -26,6 +20,3 @@ def format(ni):
                                                    toFormat["timestamp"]))
     except:
         return "Invalid Structure"
-
-output = format(test)
-print(output)
