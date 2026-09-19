@@ -78,14 +78,56 @@ Content-Type: application/json
 }
 """
 
-"""Requests Headers
-
-"""
-
-"""Response Headers
-
+"""Request and Response Headers
+    Metadata fields that accompany HTTP requests, providing additional context
+        providing additional context about the communication between clients and servers.
+    They contain key-value pairs that define content types, auth credentials, chaching behavior
+        handling instructions, and its contents.
+Headers define how every API communicates
+Simple Format:
+    Header-Name: Header-Value
+Types of Headers;
+    1. Request Headers: sent from client to server. containing info about req,
+        client's capabililities, and what client expects in return
+    2. Response Headers: Sent from server to client, providing metadata about response, including 
+        how client should handle returned data
+    3. Representation Headers: Describe the encoding, format, and other characteristics of the message
+        body in both requests and responses
+    4. Payload headers: Contain information about the payload data, including content length, encoding, and
+        range information for partial content delivery
 """
 
 """HTTP Status codes and status-code families
+    3-digit numbers returned by a server to a client that communicate the outcome of an HTTP request.
+    Organized into 5 distinct families determined by their first digit:
+1xx = informal
+    request recieved, server continuing to process
+2xx = success 
+    action successfully received, understood, and accepted
+3xx = Redirection
+    Further action needs to be taken by the client to complete the request
+4xx = Client Error
+    Request contains bad syntax or cannot be fulfilled due to a client-side issue
+5xx = Server Error
+    Server failed to fulfill an apparently valid request due to an internal error
 
+Key status code to know:
+200 OK
+201 Created
+204 No Content
+301 Moved Permanently
+302 Found - resource temporarily located at new URL
+304 Not Modified
+400 Bad Request
+401 Unauthorized - Server does not know who you are
+403 Forbidden - Server knows who you are, but you do not have proper permissions to perform action
+404 Not Found
+408 Request Timeout
+429 Too Many Requests (Rate limiting)
+"""
+
+"""How does an HTTP Library expose response status/body/JSON
+By returning a unified response object that provides properties for the status code, raw text or binary
+    body, and parsed JSON methods
+https://www.youtube.com/playlist?list=PLMtN5CLH3nnTANATvkTFsl_M-BZJ3XONy
 """
