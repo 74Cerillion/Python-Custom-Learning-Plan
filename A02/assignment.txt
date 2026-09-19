@@ -1,0 +1,77 @@
+A02 - Days 29-31
+Primary Concept: External System Contracts
+Secondary Concepts: HTTP Failure Behavior, JSON Serialization/deserialization, Dependency isolation
+
+THE ASSIGNMENT:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+Build a tiny HTTP Market-Data adapter that obtains a JSON response and hands usable data back to your program
+For your implementation however, you are not going to depend on a live market-data service
+
+Work from a controlled/recorded response representing something conceptually like:
+{
+    "symbol": "AAPL",
+    "price": 234.56,
+    "timestamp": "2026-09-18T10:30:00"
+}
+
+REQUIRED BEHAVIOR:
+Implementation must demonstrate 4 behaviors:
+    1. Successful response - a successful HTTP-like response containing valid JSON becomes usable Python data
+    2. Non-Success status - A response representing an unsuccessful HTTP status is rejected rather than 
+        treated as legitimate market data
+    3. Malformed JSON - Something that claims to be a response but cannot be deserialized correctly is rejected
+    4. Timeout - Your external dependency behaves as though it failed to respond within the permitted time, and
+        your adapter handles that failure deliberately.
+Keep the scope extremely narrow:
+    DO NOT:
+        build retries, authentication, select a broker, implement websockets, build caching.
+
+::::::::::::::::::::::::::::PHASE 1::::::::::::::::::::::::::::
+Research/Learning. Research and Learn about the following:
+    HTTP Request/Response model
+    HTTP methods, particularly GET
+    URL/Endpoint
+    Request headers
+    Resposne headers
+    HTTP status codes and status-code families
+    200 OK
+    Common 4xx versus 5xx semantics
+    Request Timeout
+    Difference between a timeout and an HTTP error response
+    API Rate Limiting
+    429 Too Many Requests
+    JSON
+    Serialization
+    deserialization
+    Python dictionary vs JSON object
+    json.dumps()
+    json.loads()
+    How an HTTP Library exposes response status/body/JSON
+    Fixtures/Recorded Responses
+    WHy deterministic tests should generally avoid live APIs
+You should be able to explain this scenario after your research:
+    Suppose a trader asks a provider for AAPL's current price. Three things happen on three consecutive requests:
+        A -> HTTP 200 + Malformed JSON
+        B -> 500 + valid JSON
+        c -> No response; timeout
+    Explain why these represent 3 fundamentally different failure conditions, even though none produced usable
+    market data.
+
+:::::::::::::::::::::::PHASE 2::::::::::::::::::::::::::::::::;
+Planning----------
+Use this structure:
+    1. Component Responsibility - What does the adapter own?
+    2. External Contract - What does your adapter expect the external service to provide?
+    3. Internal Contract - What does the rest of your application receive from the adapter?
+    4. Failure Contract - Define expected behavior for non-success status, malformed JSON, and timeout.
+    5. Serialization boundary - Identify exactly where JSON stops being serialized external data and becomes a Python object
+    6. Dependency Analysis - Identify the external dependency and explain why you don't wnat your tests dependent upon the 
+        real service
+    7. Test Matrix - Plan at least four cases: successful response, unsuccessful HTTP status, malformed JSON, simulated timeout.
+        For each, identify input/fixture behavior, expected result, and what that test proves
+    8. Execution Flow / Pseudocode
+    9. What the tests Don't prove - Identify at least 3 things your passing tests cannot establish
+Draw a simple diagram somewhere that shows where responsibilities change hands.
+
+::::::::::::::::::::::::::PHASE 3::::::::::::::::::::::::::
+Implementation-------------
+Implement the smallest version of the program that demonstrates the design effectively
