@@ -1,0 +1,58 @@
+1. Component structure
+    The adapter owns the API responsible for requesting and receiving the data from source.
+    It also formats the data from the received JSON and turns it into a usable Python object.
+2. External Contract
+    The adapter expects the external service to provide a response and a JSON object containing
+        the requested data.
+3. Internal Contract
+    The rest of the application expects to receive normalized, usable data in the form of 
+        Python object/s
+4. Failure Contract
+    If the get request fails with a non-success status, we want the program to raise an error
+        and deliver the status to us for troubleshooting.
+    If we get malformed JSON, we want the program to let us know that we got the response we
+        were looking for from the server, but that it's unusable/malformed.
+    If we get a timeout, then we want the API to tell us that we timed out, and why. Was it
+        because of the ticker? or was it because of a network error?
+5. The JSON stops being serialized data after it's received, but before it starts being used.
+    In order for the API to return the actual sound data to the program, we need to try to deserialize
+    the data before it leaves the actual request/response portion. For this reason, it will be deserialized
+    while we test for malformations. If we get a malformation, we will fail the response and give the reason
+    why. If not, than deserialized data will be passed back to the main program.
+6. I can see two major dependencies. The first (and most literal) one is the JSON module. Without it,
+    we would not be able to perform any of the operations that we are trying to undertake. The Second,
+    plain and simple, is the network. For both of these, you would not want to define your tests around it
+    because you owuld introduce another potential point of failure. Tests should be deterministic and
+    singular. Otherwise, you might find yourself guessing at why a test failed when the reason it failed
+    had nothing to do with your code at all.
+
+8.
+//import json module
+
+//define a custom exception that allows us to return explicit failure reasons
+    //pass, for definitions in moment
+
+//def a class for API actions
+    //init with self and http_client
+
+    //def fetch_ticker, self and requested symbol
+        //try to contact the ticker with .get()
+        //except timeout error:
+            //return the failure code
+        //except other exceptions
+            //return network error
+        
+        //if status code is not 200OK
+            //raise unsuccessful error and return status code
+
+        //try to deserialize data
+        //catch failure exception and display malformed data status
+
+        //return data
+
+9.
+The tests don't prove efficacy in live environments because they can only test the explicit logic.
+They cannot prove network connectivity.
+They cannot catch success or acceptance criteria.
+They test whether or not the program logic is correct, but they cannot prove that the program meets
+    the acceptance criteria or design for which is was programmed initially.
