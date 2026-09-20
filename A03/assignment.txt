@@ -1,0 +1,89 @@
+A03 - SQL Persistence and Transactions
+Primary Concept: Durable state
+Secondary Concept: Data integrity, transactions, parameterization, recovery
+
+THE ASSIGNMENT::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+Build a tiny market-observation repository using Python's built-in sqlite3
+It receives observations resembling:
+{
+    "symbol": "AAPL",
+    "price": 234.56,
+    "timestamp": "2026-09-20T09:31:00"
+}
+and persists then. Repo must support the following operations:
+    store observation
+    retrieve observation
+
+REQUIRED BEHAVIORS::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+1. Persistence - insert timestamped market observation and retrieve it
+2. parameterized SQL - Application values must not be interpolated directly
+    into SQL strings
+3. Uniqueness/Integrity - Establish a meaningful unique contraint so an
+    identical observation cannot silently be inserted twice (implement
+    intel idempotency)
+4. Transaction Rollback - Demonstrate that a failed multi-operation does
+    not leave the DB partially modified
+5. Restart/Read-Back - Terminate/Close the original DB connection, create a
+    new one, and prove previously committed data still exists
+
+PHASE 1: Research / Learning::::::::::::::::::::::::::::::::::::::::::::::::
+1. SQLite versus sqlite3
+2. Connection
+3. Cursor
+4. execute()
+5. Parameterized Queries
+6. Why string formatting in SQL is dangerous
+7. commit()
+8. rollback()
+9. Transactions
+10. Atomicity
+11. Autocommit vs explicit transaction control
+12. Primary Keys
+13. UNIQUE Constraints
+14. Composite Uniqueness
+15. sqlite3.IntegrityError
+16. Database files versus :memory:
+17. Connection lifetime versus data lifetime
+18. Context managers with sqlite3
+19. What happens when an operation fails midway through a transaction
+
+PHASE 2: Planning::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+1. Repository responsibility — What does this component own? What does it 
+    explicitly not own?
+2. Schema — Define your table, columns, SQLite types, primary key, and 
+    constraints.
+3. Uniqueness rule — Define what makes two observations “the same 
+    observation.” You choose the rule and justify it.
+4. Write contract — What does store() conceptually accept, and what 
+    constitutes successful storage?
+5. Read contract — What can the caller retrieve and in what conceptual 
+    representation?
+6. Transaction boundary — Identify which operations must succeed/fail 
+    together and why.
+7. Failure contract — What happens after a duplicate, malformed operation, 
+    or other database failure?
+8. Test/evidence matrix — Plan demonstrations for normal insert/read, 
+    duplicate rejection, rollback, and restart/read-back.
+9. What this evidence DOESN'T prove — at least three limitations.
+10. Pick and implement a uniqueness rule that makes sense for use in 
+    duplicate prevention. Defend your decision.
+And draw this:
+
+[ Python observation ]
+          │
+          ▼
+[       ?????       ]
+          │
+          ▼
+[       ?????       ]
+          │
+     process ends
+          │
+     process starts
+          │
+          ▼
+[       ?????       ]
+
+Label where volatile state becomes durable state.
+
+PHASE 3- Implementation::::::::::::::::::::::::::::::::::::::::::::::::::
