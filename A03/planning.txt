@@ -47,7 +47,7 @@ read committed state
         boundaries are at: line 33, 54, 69, 89 
 7. Failure Contract:
     After a duplicate malformed operation or database failure, the program catches
-        the error and prints it to the terminal.
+        the error and prints it to the terminal. The 
 8. Test/Evidence Matrix:   
     done.
 9. Skipped
