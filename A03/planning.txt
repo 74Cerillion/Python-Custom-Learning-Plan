@@ -1,0 +1,26 @@
+Connection
+    │
+Cursor / execute()
+    │
+Parameterized SQL
+    │
+Transaction
+    ├── COMMIT ─────► durable committed state
+    │
+    └── failure
+          │
+     IntegrityError
+          │
+          ▼
+       ROLLBACK
+
+File-backed SQLite
+    │
+    ▼
+close connection
+    │
+    ▼
+new connection
+    │
+    ▼
+read committed state
