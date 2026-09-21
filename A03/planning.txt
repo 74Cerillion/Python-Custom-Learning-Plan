@@ -24,3 +24,43 @@ new connection
     │
     ▼
 read committed state
+
+1. Repository Responsibility:
+    This component owns the communication with the SQLite database. 
+        It establishes a connection and cursor with a persistent DB
+        and takes ownership of inserting, changing, and managing the DB.
+2. Schema
+    Table: market_observations
+    Columns: ID, Symbol, Price, Timestamp, Time of Entry
+    SQLite Types: 3?
+    Primary Key: ID - unique to Entry and meaningless (important for security)
+    Contraints: Nothing can be NULL
+3. Uniqueness Rule:
+    The uniqueness rule is on the composite between (symbol, timestamp)
+4. Write Contract:
+    Store conceptually accepts parameterized SQL
+5. Read Contract:
+    The program will get back a Python object in the form of a Dict() specifying
+        the {"symbol": "xyz", "price": "xyz", "timestamp": "xyz"}
+6. Transaction Boundary:
+    There's no commit() because it's handled automatically by with conn. The
+        boundaries are at: line 33, 54, 69, 89 
+7. Failure Contract:
+    After a duplicate malformed operation or database failure, the program catches
+        the error and prints it to the terminal.
+8. Test/Evidence Matrix:   
+    done.
+9. Skipped
+10. Defend {3}
+    The uniqueness rule on (symbol, timestamp) composite works to make sure that
+        we only have one entry per symbol at a given time. We don't want it on any
+        one column because that would prevent continuous collection. So it has to
+        be a composite, and this makes sense. It prevents duplicate collection
+        and ensures that we're still able to collect more later. (symbol, price)
+        would work too, but in a rare occasion that we have to clear context and
+        it's been a while since we've had a price update, that would completely 
+        clear our knowledge of the stock temporarily. This way future-proofs and
+        ensures that we keep context, while allowing us to always collect the up
+        to date information without collecting dups.
+
+(Skipping flowchart because it's above)
