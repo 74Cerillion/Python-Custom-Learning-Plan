@@ -1,0 +1,161 @@
+A04 - Module Boundaries, Typing & Failures
+Purpose: Make change and failure local rather than contagious
+
+By the end, answer the following questions:
+    1. Who owns the state?
+    2. Who is allowed to transform?
+    3. What does this component promise to return?
+    4. If it fails, where should that failure be handled?
+
+PHASE 1:::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+Research and learn:
+1.1--------------
+    Responsibility Boundaries
+    Separation of Concerns
+    Cohesion
+    Coupling
+    Why a module boundary should correspond to a meaningful
+        responsibility
+    Dependency direction
+Why should the repository know nothing about parsing HTTP
+    responses?
+
+1.2--------------
+    Receiving state
+    Transforming state
+    Owning state
+    Persisting state
+    Coordinating state
+
+1.3--------------
+    Python Type Hints
+    Parameter annotations
+    Return annotations
+    Optional
+    Collections like List[T]
+    dict[str, ...]
+    Type aliases
+    Static Information vs runtime enforcement
+
+1.4--------------
+    Define a typed interface. What information must cross this
+        boundary, and what representations should both sides
+        agree upon?
+
+1.5--------------
+    Understand the difference between where an exception
+        originates vs where exception should be handled
+
+1.6--------------
+    Understand why translating implementation-specific failures
+        at architectural boundaries can reduce coupling
+
+1.7--------------
+    logging()
+
+1.8--------------
+    Correlation IDs
+    Understand that a correlation ID provides continuity across
+        otherwise independent log events belonging to the same
+        logical operation
+
+PHASE 2:::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+Address these:
+    1. Module Responsibility: Define exactly what Parser,
+        Repo, and Orchestrator own and explicitly state
+        one thing each does not own.
+    2. Dependency Direction: Draw the dependency relationships.
+        Explain why, for example, repo shouldn't need to
+        understand Parser internals
+    3. State Ownership Trace: Take one observation from input ->
+        parsing -> orchestration -> persistence and identify Who
+        creates, transforms, coordinates, and durably stores it
+    4. Types Interface: Define the input/output contracts
+        crossing at least one meaningful module boundary
+    5. Failure Ownership: Pick at least two failure cases and
+        identify where each originates vs where it should
+        ultimately be handled
+    6. Logging Contract: Decide what deserves INFO, WARNING, and
+        ERROR/EXCEPTION for this tiny program
+    7. Correlation Strategy: Explain where a correlation ID
+        originates and how it follows one operation across
+        boundaries
+    8. Sensitive Information Rule: Explicitly identify something
+        that must never appear in your logs
+
+PHASE 3:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+You're building a small multi-module market-data ingestion program that takes a simulated external market-data response, parses it into a typed internal representation, coordinates processing, and persists the valid observation to SQLite.
+
+This deliberately combines A01–A03 without becoming Trader.
+
+Input
+
+main.py should begin with a controlled/simulated external payload. Something along these lines conceptually:
+
+raw_market_data = """
+{
+    "symbol": "AAPL",
+    "price": 234.56,
+    "timestamp": "2026-09-21T09:31:00"
+}
+"""
+
+You choose the exact representation.
+
+Required architecture
+                 raw external data
+                        │
+                        ▼
+                  ┌──────────┐
+                  │  Parser  │
+                  └────┬─────┘
+                       │
+                typed observation
+                       │
+                       ▼
+                ┌──────────────┐
+                │ Orchestrator │
+                └──────┬───────┘
+                       │
+                       ▼
+                 ┌────────────┐
+                 │ Repository │
+                 └─────┬──────┘
+                       │
+                       ▼
+                     SQLite
+
+Parser: Accepts the simulated external representation, deserializes/validates what it owns, and produces the agreed internal representation. It knows nothing about SQLite.
+
+Repository: Accepts the internal observation and persists/retrieves it using SQLite. It knows nothing about JSON parsing.
+
+Orchestrator: Coordinates the operation. It tells the parser to parse and the repository to persist. This is where you reason about application-level success/failure rather than stuffing coordination into either lower-level component.
+
+Main: Composition/entry point. Instantiate the pieces, supply the controlled input, and initiate the operation.
+
+Required behavior
+
+Then deliberately demonstrate one failure path.
+
+The important part is that the log contains your correlation ID but doesn't dump sensitive input.
+
+You can put a fake credential into the simulated external context if useful:
+
+API_KEY=SUPER_SECRET_BLAH_BLAH
+
+Then demonstrate that your resulting error/log output does not contain it.
+
+Don't actually use a real credential.
+
+Definition of Done
+
+Your program must demonstrate:
+
+valid controlled market data travels Parser → Orchestrator → Repository → SQLite
+responsibilities are separated across modules
+at least one meaningful module boundary has an explicit typed interface
+one correlation ID follows the same operation across multiple modules
+successful persistence can be verified
+one intentional failure travels to the boundary you selected during planning
+logs identify the failed operation without exposing the simulated credential
+you can verbally trace who owns the state at each stage and why
