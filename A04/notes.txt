@@ -52,7 +52,7 @@ Imagine a piece of data moving through the following stages:
 It looks like the same data moving through the system, but its meaning 
     and ownership are changing
 5 Different Relationships with State:
-    1. Receiving state - component acceps some state from somewhere else
+    1. Receiving state - component acceptss some state from somewhere else
     2. Transforming state - It changes the representation or meaning of
                             that state
     3. Owning state - it's responsible for the rules/invariants associated
