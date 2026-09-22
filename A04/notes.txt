@@ -1,0 +1,113 @@
+========================================================================
+            TOPIC 1 - Boundaries and Separation of Concerns
+========================================================================
+Module Boundaries and Separation of Concerns
+    Functionality isn't the only property we're engineering for
+    Also important:
+        Modularity, abstractions, cohesion, etc.
+        all of these things help you understand something 
+            inherently more complicated than the human
+            brain can physiologically hold in memory
+            at one time.
+        When you divide, separate concerns, and build modular
+            programs, when something breaks, it's easier
+            to solve when you don't have to re-analyze the 
+            whole system. A system that's loosely coupled
+            holds the advantage that changes to a function's
+            implementation won't break the code base, because
+            the code base is designed around interfaces
+    A concern is an area of responsibility or knowledge within a
+        system
+    You can think of it in terms of "What knowledge is 'X' allowed
+        to know?
+    There are also secure coding benefits.
+
+File Separation does not equal Architectural Separation
+    It's not as simple as "separate code into different files"
+    Separation refers to what each component knows and owns
+
+Why the Orchestrator exists:
+    It doesn't need to know what A and B do, it just needs to know
+        what A needs from B in order to function. This allows you 
+        to build loosely coupled applications.
+
+Here's how to tell:
+    Would Parser still need JSON knowledge if we replaced the SQLite
+        DB with PostgreSQL?
+        Yes. So JSON belongs independently of persistence
+    Would Repo still need SQL knowledge if the market data came from
+        WebSockets instead of a recorded response?
+        Yes. So persistence belongs independently of ingestion
+
+GOLDEN RULE::::::::::::: Create a boundary when there is a meaningful
+        difference in responsibility, knowledge, lifecycle, or reason
+        to change.
+
+==========================================================================
+                        TOPIC 2 - State Ownership
+==========================================================================
+* Having access to state is not the same as owning it
+Imagine a piece of data moving through the following stages:
+    raw_data -> Parser -> observation -> Orchestrator -> Repo -> SQLite
+It looks like the same data moving through the system, but its meaning 
+    and ownership are changing
+5 Different Relationships with State:
+    1. Receiving state - component acceps some state from somewhere else
+    2. Transforming state - It changes the representation or meaning of
+                            that state
+    3. Owning state - it's responsible for the rules/invariants associated
+                    with that state
+    4. Coordinating state - It determines where the state goes next
+    5. Persisting state - It makes the state durable
+These responsibilities can belong to different components
+
+MY PROGRAM OWNS PERSISTENCE, SQL OWNS DURABILITY!!!!!
+
+WHen you don't know where behavior belongs, ask:
+    Which component has enough information and authority to make this
+    decision without needing knowledge that belongs to another component?
+
+==========================================================================
+                        TOPIC 3 - Python Type Hints
+==========================================================================
+Type hints decribe the contract of the function.
+def calcPosition(price: float, quantity: int) -> float:
+    return price * quantity
+Now if you're writing code that needs to use that function, you know
+    immediately that it needs a float, and int, and it will give you a 
+    float back
+This makes boundaries explicit
+The annotation is metadata describing the contract. In Python, it is not
+    enforced.
+
+STATIC CHECKING vs RUNTIME CHECKING
+If you call the above function with proper arguments and get a str() back,
+    you know that something is wrong with the function. That's called
+    static checking.
+Not including the type hints means you have to wait until it runs to test.
+    This is known as runtime checking.
+This practice does not replace input validation
+
+Optional extends this functionality even further
+    from typing import Optional
+    def retrieve(...) -> Optional[Observation]
+Means the function can return either Observation OR None
+Collection annotations are like list[observation]
+    This means a 'list whose elements are expected to be Observations
+
+==========================================================================
+                TOPIC 4 - Typed Interfaces Across Boundaries
+==========================================================================
+The agreement between components about what crosses their boundary
+This gives each boundary a contract
+Boundries act as choke points. This allows you to reason "if an 
+    Observation exists downstream, it should have crossed the boundary."
+
+==========================================================================
+                        TOPIC 5 - Exception Ownership
+==========================================================================
+
+
+==========================================================================
+                                TOPIC 2
+==========================================================================
