@@ -106,8 +106,63 @@ Boundries act as choke points. This allows you to reason "if an
 ==========================================================================
                         TOPIC 5 - Exception Ownership
 ==========================================================================
-
+Anwers the question, when something fails, which component is responsible
+    for dealing with it?
+This is the primary purpose for separation of concerns. Rather than
+    digging through 9 different components' implementation, the program
+    has been designed such that the error tells you which module its in,
+    and loose coupling makes it such that you only have to change one
+    thing's implementation.
+This allows you to take an IT Troubleshooting approach to fixing code,
+    which ties back to Modern Software Engineering practices of applying
+    the scientific method to practical problems.
+A few notes:
+    * Catching too early destroys information
+    * Think in terms of authority. Which layer has enough information and
+        authority to make the recovery decision?
+    * Catching too late has the opposite problem.
+    * Cleanup and Recovery are different. 
+    * If you don't catch an exception at the appropriate level, Python
+        naturally propogates it up the call stack.
+    * Don't catch what you can't meaningfully handle
 
 ==========================================================================
-                                TOPIC 2
+                    TOPIC 6 - Exception Translation
 ==========================================================================
+Means catching a lower-level, implementation-specific exception and
+    raising a higher-level exception that describes the failure in the
+    vocabulary of your component.
+Useful for security, because you don't expose unnecessary information to
+    a user when something fails.
+raise ... from ... in Python is useful to know
+Swallowing means catchnig the error, but returning or raising something
+    that's not the error:
+try:
+    ...
+except sqlite3.Error:
+    return False
+
+==========================================================================
+                      TOPIC 7 - Logging vs print()
+==========================================================================
+print communicates with the human running the program.
+Logging creates an operational record of what the program is doing
+Purposes overlap, but they are fundamentally different
+
+Logging adds structure.
+import logging
+logger = logging.getLogger(__name__)
+logger.info('Observation stored')
+messages doesn't look revolutionary but the sysem can attach context
+
+logger = logging.getLogger(__name__)
+    means "give this module a logger identified with this module's
+    name
+logger.error() will record the error message
+logger.exception() records the message plus the traceback information
+
+==========================================================================
+                        TOPIC 8 - Correlation IDs
+==========================================================================
+A correlation ID is an identifier assigned to one logical operation and 
+    carried with that operation across component boundaries.
