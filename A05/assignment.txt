@@ -1,0 +1,93 @@
+A05 - Asyncio Execution and Bounded Concurrency
+
+PROGRAM::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+We're going to keep the domain continuity from A02–A04 and build a:
+
+Concurrent Market Fixture Ingestion Pipeline
+
+No network. No live API. No Trader integration.
+
+You'll have several controlled market-data fixtures representing independent incoming observations:
+
+AAPL fixture ─┐
+MSFT fixture ─┼──► concurrent ingestion
+NVDA fixture ─┤
+AMD fixture  ─┤
+GOOG fixture ─┘
+
+Each fixture will simulate an I/O-bound operation with different delays.
+
+Conceptually:
+
+Producer(s)
+    │
+    ▼
+┌──────────────┐
+│ BOUNDED QUEUE│
+└──────┬───────┘
+       │
+       ├────► Worker 1
+       ├────► Worker 2
+       └────► Worker 3
+
+The important word is bounded.
+
+If producers can create work faster than consumers can process it, we're not going to allow:
+
+Queue size:
+
+10
+100
+1,000
+100,000
+1,000,000
+...
+
+to grow forever.
+
+That gives us our first practical exposure to backpressure.
+
+=============================================================================================   
+|                                       LEARNING BLOCK                                      |
+=============================================================================================
+1. Concurrency vs Parallelism vs Sequential Execution
+2. Processes, Threads, and Asyncio
+3. Coroutines and async def
+4. The event loop
+5. What await actually means
+6. Tasks and cooperative scheduling
+7. Concurrent execution with multiple Tasks
+8. Timeouts
+9. Cancellation and cleanup
+10. Queues, producers, and consumers
+11. Bounded queues and backpressure
+12. Common async failure modes
+
+=============================================================================================
+The finished program stays deliberately tiny.
+
+Something approximately like:
+
+a05/
+├── main.py
+├── ingestion.py
+└── fixtures.py
+
+or whatever boundaries your planning leads you toward.
+
+You'll use controlled delays rather than a real network:
+
+Fixture A → simulated 0.5s I/O
+Fixture B → simulated 1.5s I/O
+Fixture C → simulated timeout
+Fixture D → simulated 0.2s I/O
+...
+
+Then demonstrate the workbook's four required pieces of evidence:
+
+await suspension
+concurrent execution
+timeout + cancellation
+bounded queue
+
+The queue must actually reach its bound at least once so you can explain what happens to the producer rather than merely declaring maxsize=N.
