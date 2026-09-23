@@ -79,5 +79,46 @@ Don't get it confused though, async creates the machinery for asynch
     scheduling to actually occur
 
 ======================================================================
-                Topic 3 - Coroutines and async def
+                Topic 3/12 - Coroutines and async def
 ======================================================================
+asynchronous code is not automatically concurrent execution
+coroutines have state and using the await keyword can change their
+    state to allow others to run while you wait
+import asyncio
+
+async def get_price():
+    print("A")
+    await asyncio.sleep(1)
+    print("B")
+    return 100
+
+async def main():
+    print("C")
+    price = await get_price()
+    print("D")
+    print(price)
+
+asyncio.run(main())
+
+======================================================================
+                    Topic 4/12 - The Event Loop
+======================================================================
+              EVENT LOOP
+                  │
+          "What can run now?"
+                  │
+       ┌──────────┼──────────┐
+       ▼          ▼          ▼
+     Task A     Task B     Task C
+     READY      WAITING      READY
+       │                       │
+       └──────── candidates ───┘
+The Event loop coordinates when each task gets an opportunity to
+    progress by reading state
+"Blocking the event loop" Happens when a task holds the whole CPU
+    hostage. Imagine a task that does not have a natural wait period
+    so it takes 30 seconds to process to completion while everybody
+    else waits to run. That's a blocking operation, blocking the
+    event loop.
+Suspension creates a period during which other work may progress and
+    relevant state may change.
