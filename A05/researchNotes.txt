@@ -122,3 +122,16 @@ The Event loop coordinates when each task gets an opportunity to
     event loop.
 Suspension creates a period during which other work may progress and
     relevant state may change.
+
+======================================================================
+               Topic 5/10 - What await Actually Means
+======================================================================
+If we write
+asyn def fetchPrice():
+    return 100
+what gets returned is a fetchPrice object
+await completes the opportunity to build in concurrency, but doesn't
+    build it in itself
+An awaitable is something Python permits you to use with await
+
+https://www.youtube.com/watch?v=chrOym38pw4&t=26s
