@@ -1,0 +1,83 @@
+======================================================================
+    Topic 1/12 - Sequential Execution vs Concurrency vs Parallelism
+======================================================================
+Sequential: One operation progresses at a time, in order.
+Concurrent: Multiple operations can be in progress during the same
+            period
+Parallel: Multiple operations are executing simultaneously
+
+Parallism is about actually doing multiple computations at the same
+    instant, while concurrency is about managing multiple ongoing
+    Tasks
+
+The bottleneck is usually I/O-bound work (waiting on something
+    external like the network or disk operations)
+
+In concurrency, we could do something like:
+Start A -> Once A begins waiting -> Start B -> Once B begins waiting ->
+    Start C -> Once C begins waiting, progress A.........
+Now all 3 operations are In progress. 
+
+Sequential Processing is completely finishing each task before moving
+    on to the next
+Concurrency is multi-tasking. You're only doing one task at any given
+    time, but you have multiple tasks 'in progress' simultaneously.
+Parallelism means adding another person to do tasks literally at the
+    same as you.
+
+The most efficient method is not always concurrency, because is the
+    work for an operation is all CPU-bound, there's no wait time.
+    Where it saves time and speed up processes is when there is lots
+    of IO-Bound work in the operation.
+
+======================================================================
+              Topic 2/12 - Processes, Threads, and Asyncio
+======================================================================
+These are some of the methods that achieve parallelism and concurrency
+                 PROGRAM EXECUTION
+                        │
+          ┌─────────────┼─────────────┐
+          ▼             ▼             ▼
+      Processes       Threads      asyncio
+          │             │             │
+     separate       execution     coroutines +
+     processes       contexts      event loop
+When you execute a program, the OS creates a process for that program.
+    A process is an executing instance of a program with its own
+    processlevel resources and memory/address-space isolation.
+
+Processes are isolated. If I run two copies of the same program, A
+    does not have access to the variables of B just because they are
+    the same program. They're two different processes.
+
+Threads live inside a process:
+┌──────────────────────────────────┐
+│ Python Process                   │
+│                                  │
+│     Thread A                     │
+│     Thread B                     │
+│     Thread C                     │
+│                                  │
+│        shared process memory     │
+└──────────────────────────────────┘
+
+A thread is an execution within a process.
+
+Concurrency does create correctness problems when multiple execution
+    context interact with shared mutable state. This is known as a 
+    race condition.
+
+Python provides the asyncio module that allows one thread to manage
+    many concurrent operations within an event loop.
+Cooperative Concurrency - With threads, the OS/runtime participates
+    in scheduling execution between threads. With asynio, your
+    coroutines cooperate with an event loop.
+The event loop is the scheduler
+
+Don't get it confused though, async creates the machinery for asynch
+    execution, but suspension points are what permit cooperation
+    scheduling to actually occur
+
+======================================================================
+                Topic 3 - Coroutines and async def
+======================================================================
